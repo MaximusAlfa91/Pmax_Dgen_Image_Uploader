@@ -1,0 +1,86 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-image: url('https://spicytool.net/wp-content/uploads/2023/11/rubaitul-azad-K1Hns0VkihQ-unsplash.jpg');
+  background-color: #faf7fd;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 600px;
+  margin-top: 40px;
+  padding: 30px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(165, 105, 189, 0.1);
+}
+
+h1 {
+  font-size: 26px;
+  margin-bottom: 10px;
+  text-align: center;
+  color: #7e57c2;
+}
+
+p {
+  font-size: 15px;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #6a1b9a;
+}
+
+#account-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.account-button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 12px;
+  background-color: #e1bee7;
+  color: #4a148c;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.account-button:hover {
+  background-color: #ce93d8;
+}
+
+.account-button.active {
+  background-color: #8e24aa;
+  color: white;
+  font-weight: bold;
+}
+
+button.download {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  background-color: #ab47bc;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+button.download:hover {
+  background-color: #9c27b0;
+}
+
+hr {
+  margin: 30px 0;
+  border: none;
+  border-top: 1px solid #e1bee7;
+}
