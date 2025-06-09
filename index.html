@@ -6,11 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Default Uploadcare public key set here -->
   <script>
-    var UPLOADCARE_PUBLIC_KEY = 'd7638f5a88dbee59f6df'; // Default account
+    var UPLOADCARE_PUBLIC_KEY = 'd7638f5a88dbee59f6df';
   </script>
-
   <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
 </head>
 <body>
@@ -20,13 +18,23 @@
 
     <div id="account-buttons"></div>
 
+    <div id="active-account" class="active-account-box">
+      <strong>Current account:</strong> Account_1
+    </div>
+
     <hr />
 
-    <input type="hidden" role="uploadcare-uploader" data-multiple="true" id="uploader" />
+    <div id="uploader-container">
+      <input type="hidden" role="uploadcare-uploader" data-multiple="true" id="uploader" />
+    </div>
 
     <br /><br />
     <button class="download" onclick="downloadCSV()">📥 Download CSV</button>
   </div>
+
+  <footer>
+    <p>Made with ❤️ by Max Ackerl</p>
+  </footer>
 
   <script>
     const accounts = {
@@ -38,6 +46,7 @@
     };
 
     let currentAccount = null;
+    let widgetInstance = null;
 
     function renderButtons() {
       const container = document.getElementById('account-buttons');
@@ -58,18 +67,19 @@
     function setAccount(accountName) {
       window.UPLOADCARE_PUBLIC_KEY = accounts[accountName];
       currentAccount = accountName;
+
+      document.getElementById('active-account').innerHTML = `<strong>Current account:</strong> ${accountName}`;
       renderButtons();
 
-      // Re-initialize widget with new key
-      const uploaderInput = document.getElementById('uploader');
-      uploadcare.destroyAll();
-      uploadcare.Widget(uploaderInput);
+      const container = document.getElementById('uploader-container');
+      container.innerHTML = '<input type="hidden" role="uploadcare-uploader" data-multiple="true" id="uploader" />';
+      widgetInstance = uploadcare.Widget('#uploader');
 
-      console.log(`✅ Active account: ${accountName} (${UPLOADCARE_PUBLIC_KEY})`);
+      console.log(`✅ Switched to: ${accountName} (${UPLOADCARE_PUBLIC_KEY})`);
     }
 
     async function downloadCSV() {
-      const widget = uploadcare.Widget('[role=uploadcare-uploader]');
+      const widget = widgetInstance || uploadcare.Widget('#uploader');
       const result = await widget.value();
 
       let allUrls = [];
