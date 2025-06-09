@@ -20,7 +20,7 @@
 
     <hr />
 
-    <input type="hidden" role="uploadcare-uploader" data-multiple="true" id="uploader" />
+    <input type="hidden" role="uploadcare-uploader" data-multiple="true" id="uploader" data-instant="false"/>
 
     <br /><br />
     <button class="download" onclick="downloadCSV()">📥 Download CSV</button>
@@ -60,7 +60,7 @@
 
       const uploaderInput = document.getElementById('uploader');
       uploadcare.destroyAll();
-      uploadcare.Widget(uploaderInput);
+      uploadcare.Widget(uploaderInput).openDialog();
 
       console.log(`✅ Cuenta activa: ${accountName} (${UPLOADCARE_PUBLIC_KEY})`);
     }
