@@ -1,16 +1,22 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Uploadcare Multi-Cuenta</title>
-  <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
+  <title>Uploadcare Multi-Account</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Default Uploadcare public key set here -->
+  <script>
+    var UPLOADCARE_PUBLIC_KEY = 'd7638f5a88dbee59f6df'; // Default account
+  </script>
+
+  <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
 </head>
 <body>
   <div class="container">
     <h1>📤 Performance Max & Demand Gen Image Uploader Tool</h1>
-    <p>Select the Account you Want to Upload Your Images to</p>
+    <p>Select the account you want to upload your images to:</p>
 
     <div id="account-buttons"></div>
 
@@ -50,15 +56,16 @@
     }
 
     function setAccount(accountName) {
-      UPLOADCARE_PUBLIC_KEY = accounts[accountName];
+      window.UPLOADCARE_PUBLIC_KEY = accounts[accountName];
       currentAccount = accountName;
       renderButtons();
 
+      // Re-initialize widget with new key
       const uploaderInput = document.getElementById('uploader');
       uploadcare.destroyAll();
       uploadcare.Widget(uploaderInput);
 
-      console.log(`✅ Cuenta activa: ${accountName} (${UPLOADCARE_PUBLIC_KEY})`);
+      console.log(`✅ Active account: ${accountName} (${UPLOADCARE_PUBLIC_KEY})`);
     }
 
     async function downloadCSV() {
