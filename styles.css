@@ -1,86 +1,104 @@
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-image: url('https://spicytool.net/wp-content/uploads/2023/11/rubaitul-azad-K1Hns0VkihQ-unsplash.jpg');
-  background-color: #faf7fd;
-  color: #333;
+/* --- Reset --- */
+* {
   margin: 0;
   padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #e4d4f7, #f3ebff);
   min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* --- Decorative blobs --- */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+  z-index: 0;
+}
+
+.blob1 {
+  top: -50px;
+  left: -60px;
+  width: 300px;
+  height: 300px;
+  background: #a066cc;
+}
+
+.blob2 {
+  bottom: -80px;
+  right: -40px;
+  width: 250px;
+  height: 250px;
+  background: #cd9cff;
 }
 
 .container {
+  position: relative;
+  z-index: 1;
   max-width: 600px;
-  margin-top: 40px;
-  padding: 30px;
+  margin: 5vh auto;
   background: white;
-  border-radius: 16px;
-  box-shadow: 0 8px 20px rgba(165, 105, 189, 0.1);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-h1 {
-  font-size: 26px;
-  margin-bottom: 10px;
+h2 {
+  color: #6b3aa6;
   text-align: center;
-  color: #7e57c2;
-}
-
-p {
-  font-size: 15px;
-  text-align: center;
-  margin-bottom: 20px;
-  color: #6a1b9a;
+  margin-bottom: 1rem;
 }
 
 #account-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 20px;
+  text-align: center;
+  margin-bottom: 1.5rem;
 }
 
 .account-button {
-  padding: 10px 16px;
+  padding: 0.6rem 1.2rem;
+  margin: 0.5rem;
+  background: linear-gradient(135deg, #a066cc, #cd9cff);
   border: none;
-  border-radius: 12px;
-  background-color: #e1bee7;
-  color: #4a148c;
-  font-weight: 500;
+  border-radius: 30px;
+  color: white;
+  font-weight: bold;
   cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.account-button:hover {
-  background-color: #ce93d8;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .account-button.active {
-  background-color: #8e24aa;
-  color: white;
-  font-weight: bold;
+  background: #6b3aa6;
 }
 
-button.download {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  border: none;
-  background-color: #ab47bc;
+.account-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(160, 102, 204, 0.4);
+}
+
+input[role="uploadcare-uploader"] {
+  display: block;
+  margin: 1.5rem auto;
+}
+
+.download {
+  display: block;
+  margin: 2rem auto 0;
+  background: #6b3aa6;
   color: white;
-  border-radius: 10px;
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 50px;
   cursor: pointer;
-  transition: background 0.2s ease;
+  font-weight: bold;
+  transition: background 0.3s ease;
 }
 
-button.download:hover {
-  background-color: #9c27b0;
-}
-
-hr {
-  margin: 30px 0;
-  border: none;
-  border-top: 1px solid #e1bee7;
+.download:hover {
+  background: #4f2a7f;
 }
