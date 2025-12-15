@@ -91,27 +91,27 @@
     }
 
     function initUploader(publicKey) {
-      const container = document.getElementById('uploader-container');
-      container.innerHTML = '';
+    const container = document.getElementById('uploader-container');
+    container.innerHTML = '';
 
-      uploader = UC.UploadCtxProvider({
-        publicKey
-      });
+    uploader = UC.UploadCtxProvider({
+      publicKey
+    });
 
-      const fileUploader = UC.FileUploader({
-        multiple: true
-      });
+    const uploadButton = UC.UploadButton({
+      multiple: true,
+      text: '📤 Upload images'
+    });
 
-      uploader.subscribe(fileUploader);
+    uploader.subscribe(uploadButton);
 
-      fileUploader.onChange(files => {
-        uploadedFiles = files;
-        console.log('📁 Files selected:', files);
-      });
+    uploadButton.onChange(files => {
+      uploadedFiles = files;
+      console.log('📁 Files selected:', files);
+    });
 
-      container.appendChild(fileUploader);
-    }
-
+    container.appendChild(uploadButton);
+  }
     async function downloadCSV() {
       if (!uploadedFiles.length) {
         alert('No files uploaded yet.');
