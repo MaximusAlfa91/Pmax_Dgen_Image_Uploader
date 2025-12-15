@@ -6,6 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <link rel="stylesheet" href="styles.css" />
+  <link
+  rel="stylesheet"
+  href="https://cdn.uploadcare.com/uploadcare-widget/4.x/uploadcare.css"
+/>
 
   <!-- Uploadcare v4 -->
   <script type="module">
@@ -94,12 +98,11 @@
     const container = document.getElementById('uploader-container');
     container.innerHTML = '';
 
-    uploader = UC.UploadCtxProvider({
-      publicKey
-    });
+    uploader = UC.UploadCtxProvider({ publicKey });
 
     const uploadButton = UC.UploadButton({
       multiple: true,
+      accept: 'image/*',
       text: '📤 Upload images'
     });
 
@@ -110,7 +113,7 @@
       console.log('📁 Files selected:', files);
     });
 
-    container.appendChild(uploadButton);
+    uploadButton.render(container);
   }
     async function downloadCSV() {
       if (!uploadedFiles.length) {
