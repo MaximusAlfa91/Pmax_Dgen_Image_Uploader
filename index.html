@@ -4,13 +4,16 @@
   <meta charset="UTF-8" />
   <title>Uploadcare Multi-Account</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <link rel="stylesheet" href="styles.css" />
 
-  <script>
-    var UPLOADCARE_PUBLIC_KEY = 'd7638f5a88dbee59f6df';
+  <!-- Uploadcare v4 -->
+  <script type="module">
+    import * as UC from "https://cdn.uploadcare.com/uploadcare-widget/4.x/uploadcare.min.js";
+    window.UC = UC;
   </script>
-  <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
 </head>
+
 <body>
   <div class="container">
     <h1>📤 Performance Max & Demand Gen Image Uploader Tool</h1>
@@ -24,15 +27,17 @@
 
     <hr />
 
-    <div id="uploader-container">
-      <input type="hidden" role="uploadcare-uploader" data-multiple="true" id="uploader" />
-    </div>
+    <div id="uploader-container"></div>
 
     <br />
     <button class="download" onclick="downloadCSV()">📥 Download CSV</button>
 
     <br /><br />
-    <a href="https://app.creatopy.com/team/352367/project/3509284/templates" target="_blank" class="creatopy-button">
+    <a
+      href="https://app.creatopy.com/team/352367/project/3509284/templates"
+      target="_blank"
+      class="creatopy-button"
+    >
       🎨 Go to Creatopy Website 🎨
     </a>
   </div>
@@ -51,7 +56,8 @@
     };
 
     let currentAccount = null;
-    let widgetInstance = null;
+    let uploader = null;
+    let uploadedFiles = [];
 
     function renderButtons() {
       const container = document.getElementById('account-buttons');
@@ -61,59 +67,72 @@
         const btn = document.createElement('button');
         btn.textContent = accountName;
         btn.className = 'account-button';
+
         if (currentAccount === accountName) {
           btn.classList.add('active');
         }
+
         btn.onclick = () => setAccount(accountName);
         container.appendChild(btn);
       });
     }
 
     function setAccount(accountName) {
-      window.UPLOADCARE_PUBLIC_KEY = accounts[accountName];
       currentAccount = accountName;
+      uploadedFiles = [];
 
-      document.getElementById('active-account').innerHTML = `<strong>Current account:</strong> ${accountName}`;
+      document.getElementById('active-account').innerHTML =
+        `<strong>Current account:</strong> ${accountName}`;
+
       renderButtons();
+      initUploader(accounts[accountName]);
 
+      console.log(`✅ Switched to: ${accountName} (${accounts[accountName]})`);
+    }
+
+    function initUploader(publicKey) {
       const container = document.getElementById('uploader-container');
-      container.innerHTML = '<input type="hidden" role="uploadcare-uploader" data-multiple="true" id="uploader" />';
-      widgetInstance = uploadcare.Widget('#uploader');
+      container.innerHTML = '';
 
-      console.log(`✅ Switched to: ${accountName} (${UPLOADCARE_PUBLIC_KEY})`);
+      uploader = UC.UploadCtxProvider({
+        publicKey
+      });
+
+      const fileUploader = UC.FileUploader({
+        multiple: true
+      });
+
+      uploader.subscribe(fileUploader);
+
+      fileUploader.onChange(files => {
+        uploadedFiles = files;
+        console.log('📁 Files selected:', files);
+      });
+
+      container.appendChild(fileUploader);
     }
 
     async function downloadCSV() {
-      const widget = widgetInstance || uploadcare.Widget('#uploader');
-      const result = await widget.value();
-
-      let allUrls = [];
-
-      if (result && typeof result.files === 'function') {
-        const groupFiles = await result.files();
-        for (const filePromise of groupFiles) {
-          const file = await filePromise.promise();
-          allUrls.push(file.cdnUrl);
-        }
-      } else {
-        const filesArray = Array.isArray(result) ? result : [result];
-        for (const filePromise of filesArray) {
-          const file = await filePromise.promise();
-          allUrls.push(file.cdnUrl);
-        }
+      if (!uploadedFiles.length) {
+        alert('No files uploaded yet.');
+        return;
       }
 
       let csv = 'image\n';
-      allUrls.forEach(url => {
-        csv += url + '\n';
-      });
+
+      for (const file of uploadedFiles) {
+        const fileInfo = await file.promise();
+        csv += fileInfo.cdnUrl + '\n';
+      }
 
       const blob = new Blob([csv], { type: 'text/csv' });
       const urlBlob = URL.createObjectURL(blob);
+
       const a = document.createElement('a');
       a.href = urlBlob;
       a.download = 'images.csv';
       a.click();
+
       URL.revokeObjectURL(urlBlob);
     }
 
