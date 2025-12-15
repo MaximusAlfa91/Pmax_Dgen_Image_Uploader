@@ -98,31 +98,44 @@
     };
 
     fileInput.onchange = async () => {
-      const files = [...fileInput.files];
-      if (!files.length) return;
+  const files = [...fileInput.files];
+  if (!files.length) return;
 
-      for (const file of files) {
-        const url = await uploadToUploadcare(file);
-        uploadedUrls.push(url);
-      }
+  try {
+    for (const file of files) {
+      const url = await uploadToUploadcare(file);
+      uploadedUrls.push(url);
+    }
 
-      alert(`✅ ${files.length} images uploaded`);
-    };
+    alert(`✅ ${files.length} images uploaded`);
+  } catch (err) {
+    console.error(err);
+    alert('❌ Error uploading images. Check console.');
+  }
+};
 
     async function uploadToUploadcare(file) {
-      const formData = new FormData();
-      formData.append('UPLOADCARE_PUB_KEY', accounts[currentAccount]);
-      formData.append('UPLOADCARE_STORE', '1');
-      formData.append('file', file);
+  console.log('Uploading file:', file.name);
 
-      const res = await fetch('https://upload.uploadcare.com/base/', {
-        method: 'POST',
-        body: formData
-      });
+  const formData = new FormData();
+  formData.append('UPLOADCARE_PUB_KEY', accounts[currentAccount]);
+  formData.append('UPLOADCARE_STORE', '1');
+  formData.append('file', file);
 
-      const data = await res.json();
-      return `https://ucarecdn.com/${data.file}/`;
-    }
+  const res = await fetch('https://upload.uploadcare.com/base/', {
+    method: 'POST',
+    body: formData
+  });
+
+  const data = await res.json();
+  console.log('Uploadcare response:', data);
+
+  if (!data.file) {
+    throw new Error('Upload failed');
+  }
+
+  return `https://ucarecdn.com/${data.file}/`;
+}
 
     document.getElementById('downloadCsvBtn').onclick = () => {
       if (!uploadedUrls.length) {
