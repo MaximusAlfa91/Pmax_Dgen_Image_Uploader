@@ -2,20 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Uploadcare Multi-Account</title>
+  <title>Performance Max & Demand Gen Image Uploader</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <link rel="stylesheet" href="styles.css" />
-  <link
-  rel="stylesheet"
-  href="https://cdn.uploadcare.com/uploadcare-widget/4.x/uploadcare.css"
-/>
-
-  <!-- Uploadcare v4 -->
-  <script type="module">
-    import * as UC from "https://cdn.uploadcare.com/uploadcare-widget/4.x/uploadcare.min.js";
-    window.UC = UC;
-  </script>
 </head>
 
 <body>
@@ -31,10 +21,23 @@
 
     <hr />
 
-    <div id="uploader-container"></div>
+    <!-- ✅ BOTÓN REAL -->
+    <div class="uploader-box">
+      <button id="uploadBtn" class="upload-btn">
+        📁 Upload images
+      </button>
+
+      <input
+        type="file"
+        id="fileInput"
+        accept="image/*"
+        multiple
+        style="display:none"
+      />
+    </div>
 
     <br />
-    <button class="download" onclick="downloadCSV()">📥 Download CSV</button>
+    <button class="download" id="downloadCsvBtn">📥 Download CSV</button>
 
     <br /><br />
     <a
@@ -60,88 +63,85 @@
     };
 
     let currentAccount = null;
-    let uploader = null;
-    let uploadedFiles = [];
+    let uploadedUrls = [];
+
+    const accountButtonsContainer = document.getElementById('account-buttons');
+    const activeAccountBox = document.getElementById('active-account');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const fileInput = document.getElementById('fileInput');
 
     function renderButtons() {
-      const container = document.getElementById('account-buttons');
-      container.innerHTML = '';
+      accountButtonsContainer.innerHTML = '';
 
-      Object.keys(accounts).forEach(accountName => {
+      Object.keys(accounts).forEach(account => {
         const btn = document.createElement('button');
-        btn.textContent = accountName;
+        btn.textContent = account;
         btn.className = 'account-button';
-
-        if (currentAccount === accountName) {
-          btn.classList.add('active');
-        }
-
-        btn.onclick = () => setAccount(accountName);
-        container.appendChild(btn);
+        if (account === currentAccount) btn.classList.add('active');
+        btn.onclick = () => setAccount(account);
+        accountButtonsContainer.appendChild(btn);
       });
     }
 
-    function setAccount(accountName) {
-      currentAccount = accountName;
-      uploadedFiles = [];
+    function setAccount(account) {
+      currentAccount = account;
+      uploadedUrls = [];
 
-      document.getElementById('active-account').innerHTML =
-        `<strong>Current account:</strong> ${accountName}`;
+      activeAccountBox.innerHTML =
+        `<strong>Current account:</strong> ${account}`;
 
       renderButtons();
-      initUploader(accounts[accountName]);
-
-      console.log(`✅ Switched to: ${accountName} (${accounts[accountName]})`);
     }
 
-    function initUploader(publicKey) {
-    const container = document.getElementById('uploader-container');
-    container.innerHTML = '';
+    uploadBtn.onclick = () => {
+      fileInput.click();
+    };
 
-    uploader = UC.UploadCtxProvider({ publicKey });
+    fileInput.onchange = async () => {
+      const files = [...fileInput.files];
+      if (!files.length) return;
 
-    const uploadButton = UC.UploadButton({
-      multiple: true,
-      accept: 'image/*',
-      text: '📤 Upload images'
-    });
+      for (const file of files) {
+        const url = await uploadToUploadcare(file);
+        uploadedUrls.push(url);
+      }
 
-    uploader.subscribe(uploadButton);
+      alert(`✅ ${files.length} images uploaded`);
+    };
 
-    uploadButton.onChange(files => {
-      uploadedFiles = files;
-      console.log('📁 Files selected:', files);
-    });
+    async function uploadToUploadcare(file) {
+      const formData = new FormData();
+      formData.append('UPLOADCARE_PUB_KEY', accounts[currentAccount]);
+      formData.append('UPLOADCARE_STORE', '1');
+      formData.append('file', file);
 
-    uploadButton.render(container);
-  }
-    async function downloadCSV() {
-      if (!uploadedFiles.length) {
-        alert('No files uploaded yet.');
+      const res = await fetch('https://upload.uploadcare.com/base/', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await res.json();
+      return `https://ucarecdn.com/${data.file}/`;
+    }
+
+    document.getElementById('downloadCsvBtn').onclick = () => {
+      if (!uploadedUrls.length) {
+        alert('No images uploaded.');
         return;
       }
 
       let csv = 'image\n';
-
-      for (const file of uploadedFiles) {
-        const fileInfo = await file.promise();
-        csv += fileInfo.cdnUrl + '\n';
-      }
+      uploadedUrls.forEach(url => csv += url + '\n');
 
       const blob = new Blob([csv], { type: 'text/csv' });
-      const urlBlob = URL.createObjectURL(blob);
-
-      const a = document.createElement('a');
-      a.href = urlBlob;
-      a.download = 'images.csv';
-      a.click();
-
-      URL.revokeObjectURL(urlBlob);
-    }
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'images.csv';
+      link.click();
+    };
 
     window.onload = () => {
-      const firstAccount = Object.keys(accounts)[0];
-      setAccount(firstAccount);
+      setAccount(Object.keys(accounts)[0]);
     };
   </script>
 </body>
