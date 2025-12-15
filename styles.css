@@ -97,3 +97,45 @@ footer {
   padding: 20px 10px;
   text-shadow: 1px 1px 3px #000;
 }
+
+/* === Uploadcare v4 FIX === */
+
+.uploader-box {
+  margin: 25px auto;
+  text-align: center;
+  min-height: 60px;
+}
+
+/* Fuerza visibilidad del botón */
+.uploadcare--button,
+.uploadcare--widget__button,
+.uploadcare--button_primary {
+  display: inline-flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  z-index: 10;
+}
+
+/* Evita colapsos */
+.uploadcare--root {
+  min-height: 50px;
+}
+
+.upload-btn {
+  background-color: #ffb703;
+  color: #000;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  display: block;
+  margin: 0 auto;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+}
+
+.upload-btn:hover {
+  background-color: #ffa200;
+}
